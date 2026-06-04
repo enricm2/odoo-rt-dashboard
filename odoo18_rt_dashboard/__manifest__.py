@@ -26,6 +26,8 @@ Características principales:
     'website': 'https://www.uniasser.com',
     'support': 'info@uniasser.com',
     'maintainer': 'Uniasser Consulting S.L.',
+    'price': 69.00,
+    'currency': 'EUR',
     'license': 'OPL-1',
     'depends': [
         'base',
