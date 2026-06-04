@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<!--
+    Template for the rt_field_selector custom Char widget.
+    Renders: [ text input ][ toggle button ]
+             [ ── dropdown panel (when open) ─────────── ]
+             [ search input       ][ × close ]
+             [ field rows …                              ]
+-->
+<t t-name="odoo_rt_dashboard.FieldSelectorWidget">
+    <div class="rt-fsel-root">
+
+        <!-- ── Input row ──────────────────────────────────────────────────── -->
+        <div class="d-flex gap-1 align-items-center">
+            <input
+                type="text"
+                class="o_input flex-grow-1"
+                t-att-value="currentValue"
+                t-on-input="onInput"
+                t-att-disabled="props.readonly ? true : undefined"
+                placeholder="nombre_del_campo"
+            />
+            <button
+                t-if="!props.readonly"
+                type="button"
+                class="btn btn-sm btn-outline-secondary rt-fsel-toggle"
+                title="Ver campos disponibles del modelo"
+                t-on-click="onToggle"
+            >
+                <t t-if="state.loading">
+                    <i class="fa fa-spinner fa-spin"/>
+                </t>
+                <t t-else="">
+                    <i class="fa fa-th-list"/>
+                </t>
+            </button>
+        </div>
+
+        <!-- ── Dropdown panel ─────────────────────────────────────────────── -->
+        <div t-if="state.open" class="rt-fsel-panel">
+
+            <!-- Header: search + close -->
+            <div class="rt-fsel-header d-flex gap-1 align-items-center p-2 border-bottom">
+                <input
+                    type="text"
+                    class="form-control form-control-sm flex-grow-1"
+                    placeholder="Buscar por nombre o descripción…"
+                    t-att-value="state.filter"
+                    t-on-input="onFilterInput"
+                />
+                <button type="button" class="btn btn-sm btn-link p-0 px-1"
+                        title="Cerrar" t-on-click="closePanel">
+                    <i class="fa fa-times text-muted"/>
+                </button>
+            </div>
+
+            <!-- Error message -->
+            <div t-if="state.error" class="alert alert-warning m-2 p-2 small" t-esc="state.error"/>
+
+            <!-- Field rows -->
+            <div class="rt-fsel-list">
+                <div t-if="!state.loading and filteredFields.length === 0 and !state.error"
+                     class="text-muted text-center p-3 small">
+                    Sin campos disponibles
+                </div>
+                <t t-foreach="filteredFields" t-as="field" t-key="field.name">
+                    <div
+                        class="rt-fsel-item"
+                        t-att-data-fname="field.name"
+                        t-on-click="onItemClick"
+                        t-att-title="field.name"
+                    >
+                        <code class="rt-fsel-fname" t-esc="field.name"/>
+                        <span class="rt-fsel-flabel" t-esc="field.label"/>
+                        <span class="rt-fsel-ftype badge" t-esc="field.type"/>
+                    </div>
+                </t>
+            </div>
+
+        </div>
+    </div>
+</t>
+
+</templates>

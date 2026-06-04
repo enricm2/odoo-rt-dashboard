@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wizard_nl_kpi_form" model="ir.ui.view">
+        <field name="name">wizard.nl.kpi.form</field>
+        <field name="model">wizard.nl.kpi</field>
+        <field name="arch" type="xml">
+            <form string="Asistente IA: Crear KPI">
+                <sheet>
+                    <div class="alert alert-info mb-3 py-2" role="status">
+                        <i class="fa fa-magic me-2" title="IA"/>
+                        <strong>Asistente IA</strong> — Describe el KPI en lenguaje natural
+                        y la IA generará la configuración automáticamente.
+                    </div>
+
+                    <!-- Prompt (visible en input y error) -->
+                    <group invisible="state not in ['input', 'error']">
+                        <field name="prompt" nolabel="1"
+                               placeholder="Ej: Total de ventas confirmadas del mes actual en euros"/>
+                    </group>
+
+                    <!-- Error message -->
+                    <group invisible="not result_error">
+                        <field name="result_error" nolabel="1" readonly="1"
+                               widget="char"
+                               style="color:#d97706;font-style:italic"/>
+                    </group>
+
+                    <!-- Result (visible solo en estado result) -->
+                    <group invisible="state != 'result'" string="Configuración generada por IA">
+                        <div class="alert alert-success py-2 mb-2" role="status">
+                            <i class="fa fa-check-circle me-2"/>
+                            Revisa los campos antes de crear el KPI. Puedes editarlos aquí.
+                        </div>
+                        <group>
+                            <field name="result_label" string="Nombre KPI"/>
+                            <field name="result_department" string="Departamento" required="state == 'result'"/>
+                            <field name="result_model" string="Modelo Odoo"/>
+                            <field name="result_agg_function" string="Función"/>
+                            <field name="result_measure_field" string="Campo medida"/>
+                            <field name="result_groupby_field" string="Agrupar por"/>
+                            <field name="result_chart_type" string="Tipo gráfico"/>
+                        </group>
+                        <group>
+                            <field name="result_domain" string="Dominio (JSON)"
+                                   help="Lista de condiciones generadas con campos reales del modelo. Editable."/>
+                        </group>
+                    </group>
+
+                    <field name="state" invisible="1"/>
+                </sheet>
+
+                <footer>
+                    <button string="Generar con IA"
+                            name="action_generate"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state not in ['input', 'error']"/>
+                    <button string="Crear KPI"
+                            name="action_create_kpi"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'result'"/>
+                    <button string="Reintentar"
+                            name="action_retry"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'result'"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_nl_kpi" model="ir.actions.act_window">
+        <field name="name">Crear KPI con IA</field>
+        <field name="res_model">wizard.nl.kpi</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
