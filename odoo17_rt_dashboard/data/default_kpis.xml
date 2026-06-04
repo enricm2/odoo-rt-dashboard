@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        noupdate="0" → executed on every upgrade.
+        Both methods are idempotent: they skip existing records,
+        so running them repeatedly never creates duplicates.
+    -->
+    <data noupdate="0">
+
+        <!-- 1. Create default KPIs for all departments -->
+        <function model="rt.kpi.definition" name="_create_default_kpis"/>
+
+        <!-- 2. Create one dashboard per department for the admin user -->
+        <function model="rt.dashboard" name="_create_default_dashboards"/>
+
+    </data>
+</odoo>

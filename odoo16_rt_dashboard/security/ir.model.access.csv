@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rt_dashboard_user,rt.dashboard user,model_rt_dashboard,odoo_rt_dashboard.group_rt_dashboard_user,1,0,0,0
+access_rt_dashboard_manager,rt.dashboard manager,model_rt_dashboard,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,1
+access_rt_kpi_definition_user,rt.kpi.definition user,model_rt_kpi_definition,odoo_rt_dashboard.group_rt_dashboard_user,1,0,0,0
+access_rt_kpi_definition_manager,rt.kpi.definition manager,model_rt_kpi_definition,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,1
+access_rt_alert_rule_user,rt.alert.rule user,model_rt_alert_rule,odoo_rt_dashboard.group_rt_dashboard_user,1,0,0,0
+access_rt_alert_rule_manager,rt.alert.rule manager,model_rt_alert_rule,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,1
+access_rt_alert_log_user,rt.alert.log user,model_rt_alert_log,odoo_rt_dashboard.group_rt_dashboard_user,1,0,0,0
+access_rt_alert_log_manager,rt.alert.log manager,model_rt_alert_log,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,0
+access_rt_ai_briefing_user,rt.ai.briefing user,model_rt_ai_briefing,odoo_rt_dashboard.group_rt_dashboard_user,1,0,0,0
+access_rt_ai_briefing_manager,rt.ai.briefing manager,model_rt_ai_briefing,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,1
+access_wizard_nl_kpi_manager,wizard.nl.kpi manager,model_wizard_nl_kpi,odoo_rt_dashboard.group_rt_dashboard_manager,1,1,1,1

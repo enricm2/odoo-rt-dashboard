@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_ai_briefing_list" model="ir.ui.view">
+        <field name="name">rt.ai.briefing.list</field>
+        <field name="model">rt.ai.briefing</field>
+        <field name="arch" type="xml">
+            <list string="AI Briefings" create="false" edit="false">
+                <field name="date"/>
+                <field name="department"/>
+                <field name="generated_at"/>
+                <field name="model_used" optional="show"/>
+                <field name="content" string="Preview" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_ai_briefing_form" model="ir.ui.view">
+        <field name="name">rt.ai.briefing.form</field>
+        <field name="model">rt.ai.briefing</field>
+        <field name="arch" type="xml">
+            <form string="AI Briefing" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="department"/>
+                            <field name="date"/>
+                            <field name="model_used"/>
+                            <field name="generated_at"/>
+                        </group>
+                    </group>
+                    <separator string="Briefing"/>
+                    <field name="content" widget="text" readonly="True"/>
+                    <separator string="KPI Snapshot"/>
+                    <field name="kpi_snapshot" widget="text" readonly="True"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Action ─────────────────────────────────────────────────────────── -->
+    <record id="action_rt_ai_briefing" model="ir.actions.act_window">
+        <field name="name">AI Briefings</field>
+        <field name="res_model">rt.ai.briefing</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay briefings generados aún
+            </p>
+            <p>
+                Los briefings se generan automáticamente cada día a las 08:00
+                (activa el cron correspondiente) o desde el botón "Briefing IA"
+                en el dashboard principal.
+            </p>
+        </field>
+    </record>
+
+</odoo>

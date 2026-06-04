@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Root app menu ═══════════════════════════════════════════════════ -->
+    <menuitem
+        id="menu_rt_dashboard_root"
+        name="RT Dashboard"
+        sequence="100"
+        groups="odoo_rt_dashboard.group_rt_dashboard_user"/>
+
+    <!-- ══ Main dashboard entry — OWL real-time view ═══════════════════════ -->
+    <menuitem
+        id="menu_rt_dashboard_main"
+        name="Dashboard"
+        parent="menu_rt_dashboard_root"
+        action="action_rt_dashboard_view"
+        sequence="10"
+        groups="odoo_rt_dashboard.group_rt_dashboard_user"/>
+
+    <!-- ══ Configuration ═══════════════════════════════════════════════════ -->
+    <menuitem
+        id="menu_rt_configuration"
+        name="Configuration"
+        parent="menu_rt_dashboard_root"
+        sequence="50"
+        groups="odoo_rt_dashboard.group_rt_dashboard_manager"/>
+
+    <menuitem
+        id="menu_rt_kpi_definition"
+        name="KPI Definitions"
+        parent="menu_rt_configuration"
+        action="action_rt_kpi_definition"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_rt_alert_rule"
+        name="Alert Rules"
+        parent="menu_rt_configuration"
+        action="action_rt_alert_rule"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_rt_nl_kpi_wizard"
+        name="Crear KPI con IA"
+        parent="menu_rt_configuration"
+        action="action_wizard_nl_kpi"
+        sequence="30"/>
+
+    <!-- ══ Reporting ════════════════════════════════════════════════════════ -->
+    <menuitem
+        id="menu_rt_reporting"
+        name="Reporting"
+        parent="menu_rt_dashboard_root"
+        sequence="60"
+        groups="odoo_rt_dashboard.group_rt_dashboard_manager"/>
+
+    <menuitem
+        id="menu_rt_alert_log"
+        name="Alert History"
+        parent="menu_rt_reporting"
+        action="action_rt_alert_log"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_rt_ai_briefing"
+        name="AI Briefings"
+        parent="menu_rt_reporting"
+        action="action_rt_ai_briefing"
+        sequence="20"/>
+
+</odoo>

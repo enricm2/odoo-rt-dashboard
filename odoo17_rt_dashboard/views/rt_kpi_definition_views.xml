@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_kpi_definition_list" model="ir.ui.view">
+        <field name="name">rt.kpi.definition.list</field>
+        <field name="model">rt.kpi.definition</field>
+        <field name="arch" type="xml">
+            <list string="KPI Definitions" default_order="department,sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="label"/>
+                <field name="department"/>
+                <field name="model_id"/>
+                <field name="agg_function"/>
+                <field name="measure_field" optional="hide"/>
+                <field name="chart_type"/>
+                <field name="display_format" optional="show"/>
+                <field name="groupby_field" optional="hide"/>
+                <field name="refresh_mode"/>
+                <field name="threshold_warn"/>
+                <field name="threshold_crit"/>
+                <field name="cached_value" string="Last Value" optional="show"/>
+                <field name="last_computed" optional="show"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_kpi_definition_form" model="ir.ui.view">
+        <field name="name">rt.kpi.definition.form</field>
+        <field name="model">rt.kpi.definition</field>
+        <field name="arch" type="xml">
+            <form string="KPI Definition">
+                <header>
+                    <button name="action_compute_now"
+                            string="Compute Now"
+                            type="object"
+                            class="btn-primary"
+                            help="Evaluate this KPI immediately and publish the result to bus.bus"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="label" placeholder="KPI Label"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="name"/>
+                            <field name="department"/>
+                            <field name="kpi_type"/>
+                            <field name="chart_type"/>
+                            <field name="groupby_field"
+                                   widget="rt_field_selector"
+                                   options="{'field_types': ['many2one','selection','date','datetime','boolean','char','integer']}"
+                                   invisible="chart_type not in ['bar','funnel','pie','line']"
+                                   help="Elige con el botón 🗒 o escribe el nombre. Para fechas añade granularidad: create_date:month"/>
+                            <field name="display_format"/>
+                            <field name="currency_symbol"
+                                   invisible="display_format != 'currency'"/>
+                            <field name="icon" widget="rt_icon_picker"/>
+                            <field name="icon_size"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="font_size"/>
+                            <field name="accent_color"
+                                   placeholder="#58a6ff"
+                                   help="Hex color para resaltar: #58a6ff (azul), #3fb950 (verde), #f85149 (rojo), #d29922 (amarillo)"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Data Source">
+                            <!-- Formula KPI -->
+                            <field name="formula_expr"
+                                   invisible="kpi_type != 'formula'"
+                                   required="kpi_type == 'formula'"
+                                   placeholder="{saldo_57} / {burn_rate_mensual}"/>
+                            <!-- Standard KPI -->
+                            <field name="model_id"
+                                   invisible="kpi_type == 'formula'"
+                                   required="kpi_type != 'formula'"/>
+                            <field name="model_name" invisible="True"/>
+                            <field name="domain"
+                                   invisible="kpi_type == 'formula'"
+                                   placeholder="[(&#34;state&#34;,&#34;in&#34;,[&#34;sale&#34;,&#34;done&#34;]),(&#34;date_order&#34;,&#34;&gt;=&#34;,&#34;{inicio_mes}&#34;)]"
+                                   help="Tokens dinámicos: {hoy}, {inicio_mes}, {hace_30d}, {hace_7d}, {inicio_año}"/>
+                            <field name="agg_function"
+                                   invisible="kpi_type == 'formula'"
+                                   required="kpi_type != 'formula'"/>
+                            <field name="measure_field"
+                                   widget="rt_field_selector"
+                                   options="{'field_types': ['float','integer','monetary']}"
+                                   invisible="kpi_type == 'formula' or agg_function == 'count'"
+                                   required="kpi_type != 'formula' and agg_function != 'count'"
+                                   help="Elige con el botón 🗒 o escribe el nombre del campo. Para diferencia: 'campo1 - campo2'."/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Refresh">
+                            <field name="refresh_mode"/>
+                            <field name="refresh_secs"
+                                   invisible="refresh_mode == 'bus'"/>
+                        </group>
+                        <group string="Thresholds">
+                            <field name="threshold_dir"/>
+                            <field name="threshold_warn"/>
+                            <field name="threshold_crit"/>
+                        </group>
+                    </group>
+                    <group string="Runtime">
+                        <field name="current_value" readonly="True"/>
+                        <field name="cached_value" readonly="True"/>
+                        <field name="last_computed" readonly="True"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search view ────────────────────────────────────────────────────── -->
+    <record id="view_rt_kpi_definition_search" model="ir.ui.view">
+        <field name="name">rt.kpi.definition.search</field>
+        <field name="model">rt.kpi.definition</field>
+        <field name="arch" type="xml">
+            <search string="KPI Definitions">
+                <field name="label"/>
+                <field name="model_id"/>
+                <separator/>
+                <filter name="filter_active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="filter_bus" string="Real-time" domain="[('refresh_mode','=','bus')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_department" string="Department"
+                            context="{'group_by': 'department'}"/>
+                    <filter name="group_chart" string="Chart Type"
+                            context="{'group_by': 'chart_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ─────────────────────────────────────────────────────────── -->
+    <record id="action_rt_kpi_definition" model="ir.actions.act_window">
+        <field name="name">KPI Definitions</field>
+        <field name="res_model">rt.kpi.definition</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first KPI definition
+            </p>
+            <p>
+                Define the data source, aggregation function and thresholds
+                for each real-time KPI you want to track on your dashboards.
+            </p>
+        </field>
+    </record>
+
+</odoo>

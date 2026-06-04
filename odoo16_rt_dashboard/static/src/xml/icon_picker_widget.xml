@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odoo_rt_dashboard.IconPickerField">
+        <div class="rt-ipick-root">
+
+            <!-- ── Preview button ───────────────────────────────────── -->
+            <div t-att-class="'rt-ipick-preview' + (props.readonly ? ' rt-ipick-readonly' : '')"
+                 t-on-click="togglePicker"
+                 title="Haz clic para elegir icono">
+
+                <!-- Emoji preview -->
+                <span t-if="isEmoji" class="rt-ipick-emoji-preview" t-esc="value"/>
+                <!-- FA icon preview -->
+                <i t-elif="value" t-att-class="'fa fa-fw fa-2x ' + value"/>
+                <!-- Placeholder when empty -->
+                <i t-else="" class="fa fa-fw fa-smile-o rt-ipick-placeholder"/>
+
+                <span t-if="!props.readonly" class="rt-ipick-hint">
+                    <i class="fa fa-pencil fa-xs"/>
+                </span>
+            </div>
+
+            <!-- ── Picker panel ─────────────────────────────────────── -->
+            <div t-if="state.open" class="rt-ipick-panel">
+
+                <!-- Header -->
+                <div class="rt-ipick-panel-header">
+                    <span>Elige un icono</span>
+                    <button class="btn btn-sm btn-link rt-ipick-clear"
+                            t-on-click="clearIcon"
+                            title="Quitar icono">
+                        <i class="fa fa-times"/> Quitar
+                    </button>
+                    <button class="btn btn-sm btn-link ms-auto"
+                            t-on-click="() => { this.state.open = false; }">
+                        <i class="fa fa-times-circle"/>
+                    </button>
+                </div>
+
+                <!-- Icon groups -->
+                <div class="rt-ipick-body">
+                    <t t-foreach="groups" t-as="group" t-key="group.label">
+                        <div class="rt-ipick-group-label" t-esc="group.label"/>
+                        <div class="rt-ipick-grid">
+                            <t t-foreach="group.icons" t-as="icon" t-key="icon">
+                                <button
+                                    t-att-class="'rt-ipick-btn' + (this.isSelected(icon) ? ' rt-ipick-selected' : '')"
+                                    t-on-click="() => this.selectIcon(icon)"
+                                    t-att-title="icon">
+                                    <span t-esc="icon"/>
+                                </button>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- FA classics separator -->
+                    <div class="rt-ipick-group-label">🔤 Font Awesome (clásicos)</div>
+                    <div class="rt-ipick-grid rt-ipick-fa-grid">
+                        <t t-foreach="['fa-tachometer','fa-fire','fa-euro','fa-bar-chart','fa-line-chart',
+                                        'fa-users','fa-user','fa-building','fa-shopping-cart','fa-filter',
+                                        'fa-tag','fa-trophy','fa-star','fa-heart','fa-bolt',
+                                        'fa-truck','fa-cogs','fa-bug','fa-clock-o','fa-envelope',
+                                        'fa-bell','fa-exclamation-triangle','fa-check-circle','fa-times-circle',
+                                        'fa-thumbs-up','fa-thumbs-down','fa-flag','fa-globe']"
+                             t-as="fa" t-key="fa">
+                            <button
+                                t-att-class="'rt-ipick-btn rt-ipick-fa-btn' + (this.isSelected(fa) ? ' rt-ipick-selected' : '')"
+                                t-on-click="() => this.selectIcon(fa)"
+                                t-att-title="fa">
+                                <i t-att-class="'fa fa-fw ' + fa"/>
+                            </button>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </t>
+
+</templates>
