@@ -1,6 +1,6 @@
 {
     'name': 'RT Dashboard',
-    'version': '18.0.2.0.3',
+    'version': '19.0.2.0.3',
     'category': 'Reporting',
     'summary': 'Dashboards en tiempo real con IA, alertas multicanal e iconos personalizables',
     'description': """
