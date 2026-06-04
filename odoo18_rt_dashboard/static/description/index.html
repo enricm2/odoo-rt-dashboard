@@ -44,11 +44,12 @@
   <br><span style="font-size:.85rem;opacity:.75;display:block;margin-top:8px">Uniasser Consulting S.L. · info@uniasser.com</span>
 </div>
 
+<!-- DASHBOARD -->
 <div class="section">
   <h2>Dashboard View</h2>
   <p>Access from the main menu <strong>RT Dashboard</strong>. The system automatically creates one dashboard per department. KPI cards show the current value, variation vs the previous period, and a historical mini-chart.</p>
   <div class="screenshot-wrap">
-    <img src="main_screenshot.png" alt="RT Dashboard main view"/>
+    <img src="kpi-dashboard.png" alt="RT Dashboard main view"/>
   </div>
   <p class="caption">Main dashboard — real-time KPI cards with status indicators, bar charts and historical area charts. Automatic updates without page reload.</p>
   <div class="tip">
@@ -56,6 +57,7 @@
   </div>
 </div>
 
+<!-- FEATURES -->
 <div class="section">
   <h2>Key Features</h2>
   <div class="feature-grid">
@@ -92,15 +94,21 @@
   </div>
 </div>
 
+<!-- KPI DEFINITION -->
 <div class="section">
-  <h2>KPI Management</h2>
-  <p>Menu → <strong>RT Dashboard → KPI Definitions</strong></p>
+  <h2>KPI Definition</h2>
+  <p>Menu → <strong>RT Dashboard → KPI Definitions</strong>. Create and configure any KPI from any Odoo model.</p>
   <div class="screenshot-wrap">
-    <img src="main_screenshot.png" alt="KPI Definition form"/>
+    <img src="kpi-definition.png" alt="KPI Definition form"/>
   </div>
   <p class="caption">KPI definition form — identity fields, data source, thresholds and cached values.</p>
 
   <h3>KPI Types</h3>
+  <div class="screenshot-wrap">
+    <img src="kpi-types.png" alt="KPI Types"/>
+  </div>
+  <p class="caption">Standard KPIs aggregate a field from any Odoo model. Formula KPIs combine existing KPIs with arithmetic expressions.</p>
+
   <table>
     <tr><th>Type</th><th>When to use</th><th>Required fields</th></tr>
     <tr><td><strong>Standard</strong></td><td>Aggregate a numeric field from any Odoo model</td><td>Model, Aggregation, Measure Field</td></tr>
@@ -129,26 +137,42 @@
   </table>
 </div>
 
+<!-- FORMULA -->
 <div class="section">
   <h2>Formula KPIs</h2>
-  <p><strong>Formula</strong> KPIs combine the result of other KPIs using arithmetic expressions. They allow calculating ratios, financial runway, margins, etc.</p>
+  <p>Combine existing KPIs with arithmetic expressions to calculate ratios, financial runway, margins, etc.</p>
   <div class="screenshot-wrap">
-    <img src="main_screenshot.png" alt="Formula KPI"/>
+    <img src="kpi-formula.png" alt="Formula KPI"/>
   </div>
-  <p class="caption">Formula KPI — expression references the technical name of other KPIs in curly braces. Result is evaluated in real time.</p>
+  <p class="caption">Formula KPI — expression references the technical name of other KPIs in curly braces. Example: <code>{balance_57} / {burn_rate}</code> → runway in months.</p>
   <div class="tip">
-    <strong>💡 Technical names</strong>: Use simple names without spaces: <code>balance_57</code>, <code>burn_rate</code>, <code>monthly_sales</code>. Example formula: <code>({sales} - {costs}) / {sales} * 100</code> → margin %
+    <strong>💡 Technical names</strong>: Use simple names without spaces: <code>balance_57</code>, <code>burn_rate</code>, <code>monthly_sales</code>. Allowed operators: + − × ÷ and parentheses.
   </div>
 </div>
 
+<!-- ICON SELECTOR -->
+<div class="section">
+  <h2>Icon Selector &amp; Visual Customization</h2>
+  <p>Each KPI can have an emoji or Font Awesome icon, an accent color, and an independent icon size.</p>
+  <div class="screenshot-wrap">
+    <img src="kpi-icon-selector.png" alt="Icon Selector"/>
+  </div>
+  <p class="caption">Visual icon selector with emojis grouped by category. Click on the icon field to open the panel.</p>
+
+  <div class="screenshot-wrap">
+    <img src="kpi-icon-size.png" alt="Icon Size options"/>
+  </div>
+  <p class="caption">Icon size options — Small (~20px), Medium (~32px, default), Large (~52px).</p>
+</div>
+
+<!-- ALERTS -->
 <div class="section">
   <h2>Alert Rules</h2>
-  <p>Menu → <strong>RT Dashboard → Alert Rules</strong></p>
-  <p>Each rule monitors a KPI and triggers notifications when it exceeds (or falls below) a threshold. Configurable cooldown to avoid notification spam.</p>
+  <p>Menu → <strong>RT Dashboard → Alert Rules</strong>. Each rule monitors a KPI and triggers notifications when it exceeds (or falls below) a threshold.</p>
   <div class="screenshot-wrap">
-    <img src="main_screenshot.png" alt="Alert Rules"/>
+    <img src="kpi-alert-rules.png" alt="Alert Rules"/>
   </div>
-  <p class="caption">Alert rule configuration — KPI + level (warning/critical) + channels + message with <code>{value}</code> token.</p>
+  <p class="caption">Alert rule — KPI + level (warning/critical) + channels (Dashboard, WhatsApp, Telegram) + message with <code>{value}</code> token.</p>
   <table>
     <tr><th>Channel</th><th>Requirement</th></tr>
     <tr><td>Dashboard (in-app)</td><td>None. Automatic banner on all open dashboards.</td></tr>
@@ -157,14 +181,19 @@
   </table>
 </div>
 
+<!-- AI -->
 <div class="section">
   <h2>Artificial Intelligence (Anthropic Claude)</h2>
+  <div class="screenshot-wrap">
+    <img src="kpi-claude.png" alt="AI features"/>
+  </div>
+  <p class="caption">AI-powered features — daily executive briefing, natural language KPI generator and anomaly detection.</p>
   <div class="two-col">
     <div>
       <h3>📋 Daily Executive Briefing</h3>
-      <p>The daily cron generates a natural language summary with the most relevant KPIs for each department, highlighting anomalies and trends. Stored in <strong>RT Dashboard → AI Briefings</strong> and sent via configured channels.</p>
+      <p>The daily cron generates a natural language summary with the most relevant KPIs for each department, highlighting anomalies and trends. Stored in <strong>RT Dashboard → AI Briefings</strong>.</p>
       <div class="tip">
-        Requires an <strong>Anthropic Claude</strong> API key (starts with <code>sk-ant-</code>). Get one at <strong>console.anthropic.com</strong> and configure it in <strong>Settings → Technical → System Parameters</strong> under key <code>rt_dashboard.llm_api_key</code>.
+        Requires an <strong>Anthropic Claude</strong> API key (starts with <code>sk-ant-</code>). Get one at <strong>console.anthropic.com</strong> and set it in <strong>Settings → Technical → System Parameters</strong> under key <code>rt_dashboard.llm_api_key</code>.
       </div>
     </div>
     <div>
@@ -177,9 +206,10 @@ confirmed invoices only"</pre>
     </div>
   </div>
   <h3>🔍 Anomaly Detection</h3>
-  <p>The anomaly engine analyzes historical series of each KPI and notifies when a value deviates significantly from the historical average. Sensitivity is configurable per KPI.</p>
+  <p>The anomaly engine analyzes the historical series of each KPI and notifies when a value deviates significantly from the historical average. Sensitivity is configurable per KPI.</p>
 </div>
 
+<!-- INSTALLATION -->
 <div class="section">
   <h2>Installation &amp; Update</h2>
   <div class="step">
@@ -205,8 +235,12 @@ confirmed invoices only"</pre>
   </div>
 </div>
 
+<!-- COMPATIBILITY -->
 <div class="section">
   <h2>Compatibility</h2>
+  <div class="screenshot-wrap">
+    <img src="compatibility.png" alt="Compatibility"/>
+  </div>
   <table>
     <tr><th>Odoo Version</th><th>Community (CE)</th><th>Enterprise</th></tr>
     <tr><td>Odoo 16</td><td>✅</td><td>✅</td></tr>
@@ -217,12 +251,13 @@ confirmed invoices only"</pre>
   <div class="tip"><strong>Python dependencies:</strong> <code>anthropic</code> (install with <code>pip install anthropic</code> in the Odoo virtual environment). Required Odoo dependencies: <code>base</code>, <code>web</code>, <code>bus</code>, <code>mail</code>.</div>
 </div>
 
+<!-- FAQ -->
 <div class="section">
   <h2>Frequently Asked Questions</h2>
   <h3>Why does a KPI show 0?</h3>
   <ul>
     <li>The technical name of a referenced KPI does not match exactly the <code>{name}</code> token in the formula.</li>
-    <li>The domain filters too much — try <code>[]</code> to see if there is data.</li>
+    <li>The domain filters too much — try <code>[]</code> to check if there is data.</li>
     <li>The chosen field is computed and not SQL-aggregable. Use <strong>Compute Now</strong> and check server logs.</li>
     <li>The field does not exist in the model. Use the <strong>Field Selector</strong> to confirm.</li>
   </ul>
@@ -238,6 +273,7 @@ confirmed invoices only"</pre>
   <p>Create a bot with <strong>@BotFather</strong> on Telegram and get the token. The <code>chat_id</code> is the numeric ID of the chat or group to receive the message.</p>
 </div>
 
+<!-- FOOTER -->
 <div class="section" style="background:#f8f9fc">
   <h2>Support &amp; Contact</h2>
   <table>
