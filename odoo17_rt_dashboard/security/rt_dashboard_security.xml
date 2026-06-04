@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Module category -->
+    <record id="module_category_rt_dashboard" model="ir.module.category">
+        <field name="name">RT Dashboard</field>
+        <field name="description">Real-Time Dashboard with AI and alerts</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- User: can view dashboards and read KPI/alert data.
+         Implied by base.group_user so every internal user gets access. -->
+    <record id="group_rt_dashboard_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_rt_dashboard"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Manager: can configure KPI definitions and alert rules -->
+    <record id="group_rt_dashboard_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_rt_dashboard"/>
+        <field name="implied_ids" eval="[(4, ref('group_rt_dashboard_user'))]"/>
+    </record>
+
+    <!-- Administrator: full access, implicitly assigned to base admin -->
+    <record id="group_rt_dashboard_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_rt_dashboard"/>
+        <field name="implied_ids" eval="[(4, ref('group_rt_dashboard_manager'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>
