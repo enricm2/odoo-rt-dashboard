@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odoo_rt_dashboard.KpiWidget">
+
+        <!-- ── Error card ──────────────────────────────────────────────────── -->
+        <div t-if="props.kpi.error"
+             class="rt-kpi-card has-error">
+            <div class="rt-kpi-top">
+                <div class="rt-kpi-icon-wrap">
+                    <i class="fa fa-exclamation-triangle"/>
+                </div>
+            </div>
+            <div class="rt-kpi-label" t-esc="props.kpi.label"/>
+            <div class="rt-kpi-value" style="font-size:1rem;color:#8b949e">—</div>
+        </div>
+
+        <!-- ── Line / Area chart card ───────────────────────────────────────── -->
+        <div t-elif="isLineChart" class="rt-chart-card rt-line-card"
+             t-att-style="cardAccentStyle">
+            <div class="rt-chart-header">
+                <div class="rt-chart-title" t-att-style="chartAccentStyle">
+                    <span t-if="iconIsEmoji" class="rt-kpi-emoji-icon" t-esc="props.kpi.icon"/>
+                    <i t-else="" t-att-class="'fa fa-fw ' + (props.kpi.icon || 'fa-line-chart')"/>
+                    <span t-esc="props.kpi.label"/>
+                </div>
+            </div>
+
+            <t t-if="hasChartData">
+                <div class="rt-line-body">
+                    <svg viewBox="0 0 400 140" preserveAspectRatio="none" class="rt-line-svg">
+                        <defs>
+                            <linearGradient id="rtAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#58a6ff" stop-opacity="0.02"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Area fill -->
+                        <path t-att-d="lineChartData and lineChartData.areaPath"
+                              fill="url(#rtAreaGrad)"/>
+                        <!-- Line -->
+                        <path t-att-d="lineChartData and lineChartData.linePath"
+                              fill="none"
+                              stroke="#58a6ff"
+                              stroke-width="2.5"
+                              stroke-linejoin="round"
+                              stroke-linecap="round"/>
+                        <!-- Dots at each data point -->
+                        <t t-if="lineChartData" t-foreach="lineChartData.pts" t-as="pt" t-key="pt_index">
+                            <circle t-att-cx="pt.x" t-att-cy="pt.y" r="3"
+                                    fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+                        </t>
+                    </svg>
+                </div>
+                <!-- X-axis labels -->
+                <div t-if="lineChartData" class="rt-line-xlabels">
+                    <t t-foreach="lineChartData.xLabels" t-as="xl" t-key="xl_index">
+                        <span class="rt-line-xlabel" t-esc="xl.l"/>
+                    </t>
+                </div>
+            </t>
+            <div t-else="" class="rt-chart-empty">
+                <i class="fa fa-line-chart"/>
+                <span t-esc="chartEmptyReason"/>
+            </div>
+        </div>
+
+        <!-- ── Bar / Funnel chart card ──────────────────────────────────────── -->
+        <div t-elif="isBarChart" class="rt-chart-card rt-bar-card"
+             t-att-style="cardAccentStyle">
+            <div class="rt-chart-header">
+                <div class="rt-chart-title" t-att-style="chartAccentStyle">
+                    <span t-if="iconIsEmoji" class="rt-kpi-emoji-icon" t-esc="props.kpi.icon"/>
+                    <i t-else="" t-att-class="'fa fa-fw ' + (props.kpi.icon || 'fa-bar-chart')"/>
+                    <span t-esc="props.kpi.label"/>
+                </div>
+            </div>
+            <div t-if="hasChartData" class="rt-bars">
+                <t t-foreach="barChartRows" t-as="row" t-key="row.label">
+                    <div class="rt-bar-row">
+                        <span class="rt-bar-label" t-esc="row.label"/>
+                        <div class="rt-bar-track">
+                            <div class="rt-bar-fill"
+                                 t-att-class="row.colorClass"
+                                 t-att-style="'width:' + row.pct + '%'">
+                                <span class="rt-bar-val" t-esc="row.displayVal"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <div t-else="" class="rt-chart-empty">
+                <i class="fa fa-bar-chart"/>
+                <span t-esc="chartEmptyReason"/>
+            </div>
+        </div>
+
+        <!-- ── KPI card ─────────────────────────────────────────────────────── -->
+        <div t-else=""
+             class="rt-kpi-card"
+             t-att-class="cardLevelClass"
+             t-att-style="cardAccentStyle">
+
+            <!-- Top row: icon + delta badge -->
+            <div class="rt-kpi-top">
+                <div t-att-class="'rt-kpi-icon-wrap' + (level !== 'ok' ? ' level-' + level : '')"
+                     t-att-style="iconStyle">
+                    <span t-if="iconIsEmoji"
+                          class="rt-kpi-emoji-icon"
+                          t-esc="props.kpi.icon"/>
+                    <i t-else=""
+                       t-att-class="'fa fa-fw ' + (props.kpi.icon || 'fa-tachometer')"/>
+                </div>
+                <span t-if="deltaLabel" t-att-class="deltaClass">
+                    <i t-att-class="'fa fa-xs ' + deltaIcon"/>
+                    <t t-esc="deltaLabel"/>
+                </span>
+            </div>
+
+            <!-- Label -->
+            <div class="rt-kpi-label" t-esc="props.kpi.label"/>
+
+            <!-- Value -->
+            <div t-att-class="'rt-kpi-value' + (level !== 'ok' ? ' level-' + level : '')"
+                 t-att-style="valueStyle"
+                 t-esc="formattedValue"/>
+
+            <!-- Subtitle -->
+            <div t-if="subtitle" class="rt-kpi-subtitle" t-esc="subtitle"/>
+
+            <!-- Sparkline -->
+            <div t-if="hasSparkline" class="rt-sparkline">
+                <svg viewBox="0 0 200 44" preserveAspectRatio="none">
+                    <polygon t-att-points="sparklineAreaPoints"
+                             t-att-fill="sparklineColor"
+                             fill-opacity="0.08"/>
+                    <polyline t-att-points="sparklinePoints"
+                              fill="none"
+                              t-att-stroke="sparklineColor"
+                              stroke-width="1.5"
+                              stroke-linejoin="round"
+                              stroke-linecap="round"/>
+                </svg>
+            </div>
+
+        </div>
+    </t>
+
+</templates>

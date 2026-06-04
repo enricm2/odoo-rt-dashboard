@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── rt.dashboard list view ─────────────────────────────────────────── -->
+    <record id="view_rt_dashboard_list" model="ir.ui.view">
+        <field name="name">rt.dashboard.list</field>
+        <field name="model">rt.dashboard</field>
+        <field name="arch" type="xml">
+            <list string="Dashboards">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="department"/>
+                <field name="is_default"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── rt.dashboard form view ─────────────────────────────────────────── -->
+    <record id="view_rt_dashboard_form" model="ir.ui.view">
+        <field name="name">rt.dashboard.form</field>
+        <field name="model">rt.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Dashboard Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="department"/>
+                            <field name="is_default"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="KPIs">
+                            <field name="kpi_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="label"/>
+                                    <field name="department"/>
+                                    <field name="chart_type"/>
+                                    <field name="refresh_mode"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── rt.ai.briefing list view ───────────────────────────────────────── -->
+    <record id="view_rt_ai_briefing_list" model="ir.ui.view">
+        <field name="name">rt.ai.briefing.list</field>
+        <field name="model">rt.ai.briefing</field>
+        <field name="arch" type="xml">
+            <list string="AI Briefings" create="false" edit="false">
+                <field name="date"/>
+                <field name="department"/>
+                <field name="model_used"/>
+                <field name="generated_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── rt.ai.briefing form view ───────────────────────────────────────── -->
+    <record id="view_rt_ai_briefing_form" model="ir.ui.view">
+        <field name="name">rt.ai.briefing.form</field>
+        <field name="model">rt.ai.briefing</field>
+        <field name="arch" type="xml">
+            <form string="AI Briefing" edit="false">
+                <sheet>
+                    <group>
+                        <field name="date"/>
+                        <field name="department"/>
+                        <field name="model_used"/>
+                        <field name="generated_at"/>
+                    </group>
+                    <group string="Content">
+                        <field name="content" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Client action: OWL RT Dashboard view ──────────────────────────── -->
+    <record id="action_rt_dashboard_view" model="ir.actions.client">
+        <field name="name">RT Dashboard</field>
+        <field name="tag">rt_dashboard.main_view</field>
+    </record>
+
+    <!-- ── Actions ────────────────────────────────────────────────────────── -->
+    <record id="action_rt_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboards</field>
+        <field name="res_model">rt.dashboard</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first dashboard
+            </p>
+            <p>
+                Configure a dashboard by choosing a department and selecting
+                the KPIs to display. Phase 1 will render it in real time.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_rt_ai_briefing" model="ir.actions.act_window">
+        <field name="name">AI Briefings</field>
+        <field name="res_model">rt.ai.briefing</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI briefings generated yet
+            </p>
+            <p>
+                Daily executive briefings are generated automatically at 07:00.
+                Activate the feature in Phase 5.
+            </p>
+        </field>
+    </record>
+
+</odoo>
