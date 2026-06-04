@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_alert_rule_list" model="ir.ui.view">
+        <field name="name">rt.alert.rule.list</field>
+        <field name="model">rt.alert.rule</field>
+        <field name="arch" type="xml">
+            <list string="Alert Rules">
+                <field name="name"/>
+                <field name="kpi_id"/>
+                <field name="level" decoration-warning="level == 'warning'"
+                       decoration-danger="level == 'critical'"/>
+                <field name="channel_dashboard"/>
+                <field name="channel_whatsapp"/>
+                <field name="channel_telegram"/>
+                <field name="cooldown_mins"/>
+                <field name="last_triggered"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ──────────────────────────────────────────────────────── -->
+    <record id="view_rt_alert_rule_form" model="ir.ui.view">
+        <field name="name">rt.alert.rule.form</field>
+        <field name="model">rt.alert.rule</field>
+        <field name="arch" type="xml">
+            <form string="Alert Rule">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Rule Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Trigger">
+                            <field name="kpi_id"/>
+                            <field name="level"/>
+                            <field name="cooldown_mins"/>
+                            <field name="last_triggered" readonly="True"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Channels">
+                            <field name="channel_dashboard"/>
+                            <field name="channel_whatsapp"/>
+                            <field name="whatsapp_to"
+                                   invisible="not channel_whatsapp"
+                                   required="channel_whatsapp"/>
+                            <field name="channel_telegram"/>
+                            <field name="telegram_chat"
+                                   invisible="not channel_telegram"
+                                   required="channel_telegram"/>
+                        </group>
+                    </group>
+                    <group string="Message">
+                        <field name="message_tmpl" nolabel="1"
+                               placeholder="{kpi} ha alcanzado {value} (umbral: {threshold})"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Alert Log list (read-only) ─────────────────────────────────────── -->
+    <record id="view_rt_alert_log_list" model="ir.ui.view">
+        <field name="name">rt.alert.log.list</field>
+        <field name="model">rt.alert.log</field>
+        <field name="arch" type="xml">
+            <list string="Alert History" create="false" edit="false" delete="false">
+                <field name="triggered_at"/>
+                <field name="kpi_id"/>
+                <field name="level" decoration-warning="level == 'warning'"
+                       decoration-danger="level == 'critical'"/>
+                <field name="kpi_value"/>
+                <field name="threshold_value"/>
+                <field name="channel"/>
+                <field name="success" decoration-success="success == True"
+                       decoration-danger="success == False"/>
+                <field name="error_msg" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Actions ────────────────────────────────────────────────────────── -->
+    <record id="action_rt_alert_rule" model="ir.actions.act_window">
+        <field name="name">Alert Rules</field>
+        <field name="res_model">rt.alert.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first alert rule
+            </p>
+            <p>
+                Define when and how to notify your team when a KPI
+                crosses a critical or warning threshold.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_rt_alert_log" model="ir.actions.act_window">
+        <field name="name">Alert History</field>
+        <field name="res_model">rt.alert.log</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No alerts have fired yet
+            </p>
+        </field>
+    </record>
+
+</odoo>

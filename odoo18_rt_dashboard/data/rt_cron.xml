@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Cron: evaluate all active bus-mode KPIs and publish results to bus.bus.
+        Runs every 1 minute. For true sub-minute RT, Phase 1 OWL frontend
+        can poll /rt_dashboard/snapshot; for poll-mode KPIs the client calls
+        /rt_dashboard/poll at the configured refresh_secs interval.
+    -->
+    <record id="cron_rt_kpi_evaluate_bus" model="ir.cron">
+        <field name="name">RT Dashboard: Evaluate Bus KPIs</field>
+        <field name="model_id" ref="model_rt_kpi_definition"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_evaluate_bus_kpis()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+
+    <!-- Anomaly detection: every 5 minutes -->
+    <record id="cron_rt_anomaly_detection" model="ir.cron">
+        <field name="name">RT Dashboard: Anomaly Detection</field>
+        <field name="model_id" ref="model_rt_kpi_definition"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_run_anomaly_detection()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+
+    <!-- AI Daily Briefing: every day at 08:00 -->
+    <record id="cron_rt_ai_daily_briefing" model="ir.cron">
+        <field name="name">RT Dashboard: AI Daily Briefing</field>
+        <field name="model_id" ref="model_rt_ai_briefing"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_generate_all_briefings()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">False</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odoo_rt_dashboard.DashboardView">
+        <div class="o_rt_dashboard">
+
+            <!-- ── Alert banners ─────────────────────────────────────────────── -->
+            <div class="o_rt_alert_banners" t-if="activeAlerts.length">
+                <t t-foreach="activeAlerts" t-as="alert" t-key="alert.id">
+                    <div class="alert mb-0 py-2 px-4 d-flex align-items-center justify-content-between"
+                         t-att-class="{
+                             'alert-warning border-0 rounded-0': alert.level === 'warning',
+                             'alert-danger border-0 rounded-0':  alert.level === 'critical',
+                         }">
+                        <span class="small">
+                            <i class="fa fa-exclamation-triangle me-2"/>
+                            <strong t-esc="alert.kpi_label"/> — <t t-esc="alert.message"/>
+                        </span>
+                        <button type="button" class="btn-close btn-sm"
+                                t-on-click="() => this.dismissAlert(alert.id)"/>
+                    </div>
+                </t>
+            </div>
+
+            <!-- ── Header ────────────────────────────────────────────────────── -->
+            <div class="o_rt_dashboard_header">
+
+                <div class="rt-brand">
+                    <i class="fa fa-th-large"/>
+                    Smart Dashboard
+                </div>
+
+                <!-- Department tabs -->
+                <div class="rt-dept-tabs">
+                    <t t-foreach="state.dashboards" t-as="dashboard" t-key="dashboard.id">
+                        <div class="rt-dept-tab"
+                             t-att-class="{ active: state.selectedId === dashboard.id }"
+                             t-on-click="() => this.selectDashboard(dashboard.id)">
+                            <i t-att-class="'fa fa-fw ' + this.deptIcon(dashboard.department)"/>
+                            <span t-esc="dashboard.name"/>
+                        </div>
+                    </t>
+                    <div t-if="!state.dashboards.length" class="rt-dept-tab" style="cursor:default;opacity:.4">
+                        <i class="fa fa-tachometer"/>Sin dashboards
+                    </div>
+                </div>
+
+                <!-- Right side: Live badge + Briefing button + Edit layout + Reinstall -->
+                <div class="rt-header-right">
+                    <div t-if="kpiEntries.length" class="rt-live-badge">
+                        <span class="rt-live-dot"/>
+                        En vivo
+                    </div>
+                    <div t-att-class="'rt-briefing-btn ' + (state.showBriefing ? 'active' : '')"
+                         t-if="kpiEntries.length"
+                         t-on-click="toggleBriefing"
+                         title="Briefing ejecutivo IA">
+                        <i class="fa fa-magic"/>
+                        Briefing IA
+                    </div>
+                    <div t-if="kpiEntries.length"
+                         class="rt-edit-layout-btn"
+                         t-att-class="{ active: state.editMode }"
+                         t-on-click="toggleEditMode"
+                         title="Editar disposición del dashboard">
+                        <i t-att-class="state.editMode ? 'fa fa-check' : 'fa fa-th'"/>
+                        <t t-if="state.editMode">Listo</t>
+                        <t t-else="">Editar layout</t>
+                    </div>
+                    <div class="rt-reinstall-btn"
+                         t-on-click="reinstallKpis"
+                         t-att-class="{ disabled: state.reinstalling }"
+                         title="Actualizar KPIs predefinidos desde catálogo">
+                        <i t-att-class="state.reinstalling ? 'fa fa-spinner fa-spin' : 'fa fa-refresh'"/>
+                        <t t-if="!state.reinstalling">Reinstalar KPIs</t>
+                        <t t-else="">Actualizando…</t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── AI Briefing panel ──────────────────────────────────────────── -->
+            <div t-if="state.showBriefing" class="o_rt_briefing_panel">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <h6 class="mb-0">
+                        <i class="fa fa-magic me-2" style="color:#58a6ff"/>
+                        Briefing ejecutivo — <t t-esc="selectedDashboard and selectedDashboard.name"/>
+                    </h6>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"
+                                t-on-click="refreshBriefing"
+                                t-att-disabled="state.briefingLoading">
+                            <i t-att-class="state.briefingLoading ? 'fa fa-spinner fa-spin' : 'fa fa-refresh'"/>
+                        </button>
+                        <button class="btn-close btn-sm" t-on-click="toggleBriefing"/>
+                    </div>
+                </div>
+                <div t-if="state.briefingLoading" class="text-muted small py-2">
+                    <i class="fa fa-spinner fa-spin me-2"/>Generando con IA…
+                </div>
+                <div t-elif="state.briefingError" class="alert alert-warning py-2 mb-0 small">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <t t-esc="state.briefingError"/>
+                </div>
+                <div t-elif="state.briefing">
+                    <p class="mb-1 small" t-esc="state.briefing.content"/>
+                    <span class="text-muted" style="font-size:.7rem">
+                        <i class="fa fa-clock-o me-1"/>
+                        <t t-esc="state.briefing.generated_at"/>
+                        <t t-if="state.briefing.from_cache"> · caché</t>
+                        · <t t-esc="state.briefing.model_used"/>
+                    </span>
+                </div>
+            </div>
+
+            <!-- ── Body ──────────────────────────────────────────────────────── -->
+            <div class="o_rt_dashboard_body">
+
+                <!-- Loading -->
+                <div t-if="state.loading" class="rt-spinner-wrap">
+                    <div class="spinner-border" style="color:#58a6ff;width:2rem;height:2rem;" role="status"/>
+                </div>
+
+                <!-- Error -->
+                <div t-elif="state.error" class="alert alert-danger m-0 mb-3 small">
+                    <i class="fa fa-exclamation-circle me-2"/>
+                    <t t-esc="state.error"/>
+                </div>
+
+                <!-- No dashboards yet -->
+                <div t-elif="!state.dashboards.length" class="rt-empty-state">
+                    <i class="fa fa-tachometer"/>
+                    <h5>Aún no tienes dashboards</h5>
+                    <p class="mb-4">Carga los KPIs y dashboards predefinidos con un clic.</p>
+                    <button class="btn btn-primary px-4"
+                            t-on-click="setupDefaults"
+                            t-att-disabled="state.settingUp">
+                        <i t-if="state.settingUp" class="fa fa-spinner fa-spin me-2"/>
+                        <i t-else="" class="fa fa-magic me-2"/>
+                        <t t-if="state.settingUp">Configurando…</t>
+                        <t t-else="">Instalar KPIs y Dashboards de ejemplo</t>
+                    </button>
+                </div>
+
+                <div t-elif="!kpiEntries.length" class="rt-empty-state">
+                    <i class="fa fa-bar-chart"/>
+                    <h5>Sin KPIs configurados</h5>
+                    <p>Añade KPIs en <strong>Configuración → KPI Definitions</strong>.</p>
+                </div>
+
+                <div t-else="">
+
+                    <!-- INDICADORES CLAVE -->
+                    <div t-if="cardKpis.length" class="mb-4">
+                        <div class="rt-section-header">
+                            Indicadores clave
+                            <span t-if="state.editMode" class="rt-drag-hint">
+                                <i class="fa fa-arrows ms-2"/>arrastra para reordenar
+                            </span>
+                        </div>
+                        <div class="row g-3">
+                            <t t-foreach="cardKpis" t-as="entry" t-key="entry.id">
+                                <div class="col-12 col-sm-6 col-lg-4 col-xl-3"
+                                     t-att-draggable="state.editMode ? 'true' : 'false'"
+                                     t-att-class="{
+                                         'rt-kpi-col-draggable': state.editMode,
+                                         'rt-drag-over': state.editMode and state.dragOverId === entry.id
+                                     }"
+                                     t-on-dragstart="(e) => this.onDragStart(entry.id, e)"
+                                     t-on-dragover.prevent="() => this.onDragOver(entry.id)"
+                                     t-on-drop.prevent="() => this.onDrop(entry.id)"
+                                     t-on-dragend="() => this.onDragEnd()">
+                                    <KpiWidget kpiId="entry.id" kpi="entry"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICOS -->
+                    <div t-if="chartKpis.length">
+                        <div class="rt-section-header">
+                            Gráficos
+                            <span t-if="state.editMode" class="rt-drag-hint">
+                                <i class="fa fa-arrows ms-2"/>arrastra para reordenar
+                            </span>
+                        </div>
+                        <div class="row g-4">
+                            <t t-foreach="chartKpis" t-as="entry" t-key="entry.id">
+                                <div class="col-12 col-lg-6"
+                                     t-att-draggable="state.editMode ? 'true' : 'false'"
+                                     t-att-class="{
+                                         'rt-kpi-col-draggable': state.editMode,
+                                         'rt-drag-over': state.editMode and state.dragOverId === entry.id
+                                     }"
+                                     t-on-dragstart="(e) => this.onDragStart(entry.id, e)"
+                                     t-on-dragover.prevent="() => this.onDragOver(entry.id)"
+                                     t-on-drop.prevent="() => this.onDrop(entry.id)"
+                                     t-on-dragend="() => this.onDragEnd()">
+                                    <KpiWidget kpiId="entry.id" kpi="entry"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>
